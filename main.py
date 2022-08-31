@@ -3,32 +3,63 @@ import time
 import morse
 
 def main():
-    string_to_morse("Hello World")
-    
-def string_to_morse(string: str):
+    sample_string = 'Hello World'
+    morse_code = string_to_morse(sample_string)
+    print(f'"{sample_string}" in Morse Code is: {morse_code}')
+    string = morse_to_string(morse_code)
+    print(f'"{morse_code}" in English is: {string}')
+    sounds = morse_sound(morse_code)
+    print(f'"{morse_code}" sounds like: \n{sounds}')
+        
+def string_to_morse(string: str) -> str:
     '''
     Converts a string to morse code.
     string: The string to be converted.
-    returns: None
+    returns: 
     '''
-    print(f'"{string}" in Morse Code is: ', end='')
+    morse_code = ''
     for char in string:
         if char.isalpha():
             char = char.upper()
-            print(morse.CODES.get(char), end='')
-        elif char.isdigit():
-            print(morse.CODES.get(char), end='')
-        elif char in morse.CODES:
-            print(morse.CODES.get(char), end='')
+            
+        if char in morse.CODES:
+            morse_code += morse.CODES.get(char)
         else:
             print('Invalid character')
+            return
         
-        print(' ', end='')
-        beep(char)
+        morse_code += ' '
+        # beep(char)
+    
+    return morse_code
+    
+def morse_to_string(morse_code: str) -> str:
+    letters = morse_code.split(' ')
+    s = ''
+    for l in letters:
+        for k, v in morse.CODES.items():
+            if v == l:
+                s += k
+                # beep(k)
+                break
+        s += ' '
+    return s
         
-    print()
-        
-def beep(char: str, single_unit_duration: int = 50):
+def morse_sound(morse_code: str) -> str:
+    s = morse_to_string(morse_code)
+    
+    letters = s.split(' ')
+    sound = ''
+    for l in letters:
+        for k, v in morse.SOUNDS.items():
+            if k == l:
+                sound += v
+                beep(l)
+                break
+        sound += ' '
+    return sound  
+            
+def beep(char: str, single_unit_duration: int = 50) -> None:
     '''
     Sounds the morse code for a single character.
     char: The character to be sounded.
